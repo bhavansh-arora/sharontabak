@@ -28,7 +28,8 @@
     try {
       var s = window.sessionStorage;
       if (!s.getItem('st-visited')) { h.classList.add('is-preloading'); s.setItem('st-visited', '1'); }
-      if (s.getItem('st-transition')) { h.classList.add('is-entering'); s.removeItem('st-transition'); }
+      var t = s.getItem('st-transition');
+      if (t) { h.classList.add('is-entering'); window.__stLabel = t; s.removeItem('st-transition'); }
     } catch (e) {}
   })(document.documentElement);
 </script>
@@ -73,8 +74,24 @@
 </div>
 
 <div class="curtain" aria-hidden="true">
-  <img src="assets/img/monogram.png" alt="" width="771" height="1080">
+  <div class="curtain__panel curtain__panel--front"></div>
+  <div class="curtain__panel curtain__panel--back">
+    <div class="curtain__inner">
+      <div class="curtain__mark">
+        <svg class="curtain__frame" viewBox="0 0 120 168"><path pathLength="1" d="M60 2 L118 84 L60 166 L2 84 Z"/></svg>
+        <img src="assets/img/monogram.png" alt="" width="771" height="1080">
+      </div>
+      <p class="curtain__eyebrow">Sharon Tabak Coaching</p>
+      <p class="curtain__label"><span data-curtain-label>Welcome</span></p>
+    </div>
+    <div class="curtain__foot">
+      <img class="curtain__logo" src="assets/img/logo-white.png" alt="" width="488" height="227">
+      <span class="curtain__bar"><i></i></span>
+      <span class="curtain__tag">Peace &middot; Purpose &middot; Freedom</span>
+    </div>
+  </div>
 </div>
+<script>(function(){var t=window.__stLabel,e=document.querySelector('[data-curtain-label]');if(t&&e)e.textContent=t;})();</script>
 
 <header class="site-header" data-header>
   <div class="site-header__inner wrap">
@@ -247,19 +264,19 @@
       </div>
 
       <ul class="belong__list" data-hover-list data-stagger>
-        <li class="belong__item"><div class="belong__row"><span class="belong__num">01</span><span class="belong__text">You feel disconnected from yourself and others</span><span class="belong__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></li>
-        <li class="belong__item"><div class="belong__row"><span class="belong__num">02</span><span class="belong__text">You&rsquo;re struggling with anxiety, depression, or emotional overwhelm</span><span class="belong__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></li>
-        <li class="belong__item"><div class="belong__row"><span class="belong__num">03</span><span class="belong__text">You&rsquo;ve experienced trauma, toxic relationships, or emotional abuse</span><span class="belong__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></li>
-        <li class="belong__item"><div class="belong__row"><span class="belong__num">04</span><span class="belong__text">You&rsquo;re questioning your identity or life&rsquo;s direction</span><span class="belong__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></li>
-        <li class="belong__item"><div class="belong__row"><span class="belong__num">05</span><span class="belong__text">You want to feel more present, energized, and at peace</span><span class="belong__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></li>
-        <li class="belong__item"><div class="belong__row"><span class="belong__num">06</span><span class="belong__text">You&rsquo;re a single parent or navigating life after a major transition</span><span class="belong__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></li>
+        <li class="belong__item"><a class="belong__row" href="services.html#area-connection" data-cursor="Explore"><span class="belong__num">01</span><span class="belong__text">You feel disconnected from yourself and others</span><span class="belong__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
+        <li class="belong__item"><a class="belong__row" href="services.html#area-anxiety" data-cursor="Explore"><span class="belong__num">02</span><span class="belong__text">You&rsquo;re struggling with anxiety, depression, or emotional overwhelm</span><span class="belong__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
+        <li class="belong__item"><a class="belong__row" href="services.html#area-trauma" data-cursor="Explore"><span class="belong__num">03</span><span class="belong__text">You&rsquo;ve experienced trauma, toxic relationships, or emotional abuse</span><span class="belong__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
+        <li class="belong__item"><a class="belong__row" href="services.html#area-identity" data-cursor="Explore"><span class="belong__num">04</span><span class="belong__text">You&rsquo;re questioning your identity or life&rsquo;s direction</span><span class="belong__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
+        <li class="belong__item"><a class="belong__row" href="services.html#area-peace" data-cursor="Explore"><span class="belong__num">05</span><span class="belong__text">You want to feel more present, energized, and at peace</span><span class="belong__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
+        <li class="belong__item"><a class="belong__row" href="services.html#area-transitions" data-cursor="Explore"><span class="belong__num">06</span><span class="belong__text">You&rsquo;re a single parent or navigating life after a major transition</span><span class="belong__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li>
       </ul>
       <div class="belong__float" aria-hidden="true">
-        <img src="assets/img/horizon-800.webp" alt="" loading="lazy">
+        <img src="assets/img/conversation-800.webp" alt="" loading="lazy">
         <img src="assets/img/tide-800.webp" alt="" loading="lazy">
         <img src="assets/img/candle-800.webp" alt="" loading="lazy">
         <img src="assets/img/shoreline-800.webp" alt="" loading="lazy">
-        <img src="assets/img/conversation-800.webp" alt="" loading="lazy">
+        <img src="assets/img/horizon-800.webp" alt="" loading="lazy">
         <img src="assets/img/wfwt-community.webp" alt="" loading="lazy">
       </div>
 
@@ -319,7 +336,7 @@
         </article>
         <div class="stage stage--intro">
           <p>&ldquo;Coaching, at its heart, is about guiding someone to uncover their own answers, strengths, and potential.&rdquo;</p>
-          <a class="btn btn--light" href="services.html"><span class="btn__label">How coaching works</span><svg class="btn__arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="btn btn--light" href="services.html#how"><span class="btn__label">How coaching works</span><svg class="btn__arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
       </div>
 
@@ -375,7 +392,7 @@
           <a class="btn btn--ghost btn--block" href="https://calendly.com/sharontabak-sharontabak/30min" target="_blank" rel="noopener" data-book><span class="btn__label">Start with a free call</span></a>
         </article>
       </div>
-      <p class="plans__note" data-reveal><span>Free 30-minute discovery call</span><span>No pressure, no cost</span><a class="link-underline" href="services.html">Compare packages in detail</a></p>
+      <p class="plans__note" data-reveal><span>Free 30-minute discovery call</span><span>No pressure, no cost</span><a class="link-underline" href="services.html#pricing">Compare packages in detail</a></p>
     </div>
   </section>
 
@@ -552,7 +569,7 @@
       <ul>
         <li><a href="index.html">Home</a></li>
         <li><a href="about.html">About Sharon</a></li>
-        <li><a href="services.html">Coaching &amp; pricing</a></li>
+        <li><a href="services.html#pricing">Coaching &amp; pricing</a></li>
         <li><a href="stories.html">Client stories</a></li>
         <li><a href="community.html">Women for Women&rsquo;s Truths</a></li>
         <li><a href="contact.html">Contact</a></li>

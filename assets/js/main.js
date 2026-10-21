@@ -42,11 +42,34 @@
       preloader.classList.add('is-done');
       setTimeout(function () { root.classList.remove('is-preloading'); }, 1000);
     }
-    if (root.classList.contains('is-entering') && curtain) {
+    if (!root.classList.contains('is-entering')) setTimeout(startReveals, root.classList.contains('is-preloading') ? 650 : 120);
+  }
+
+  function landOnHash() {
+    if (!location.hash || location.hash.length < 2) return;
+    var el = doc.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'instant', block: 'start' });
+    lastY = window.scrollY; // a jump is not "scrolling down": keep the header visible
+    if (header) header.classList.remove('is-hidden');
+  }
+
+  if (!root.classList.contains('is-entering') && location.hash && doc.fonts && doc.fonts.ready) doc.fonts.ready.then(landOnHash);
+
+  /* Arriving from another page: lift the branded curtain as soon as the page
+     and its fonts are ready (no need to wait for every image). */
+  if (root.classList.contains('is-entering') && curtain) {
+    var lifted = false;
+    var lift = function () {
+      if (lifted) return; lifted = true;
+      landOnHash();
       curtain.classList.add('is-out');
-      setTimeout(function () { root.classList.remove('is-entering'); curtain.classList.remove('is-out'); }, 950);
-    }
-    setTimeout(startReveals, root.classList.contains('is-preloading') ? 650 : 120);
+      setTimeout(startReveals, 650);
+      setTimeout(function () { root.classList.remove('is-entering'); curtain.classList.remove('is-out'); }, 1500);
+    };
+    var fontsReady = doc.fonts && doc.fonts.ready ? doc.fonts.ready : Promise.resolve();
+    Promise.race([fontsReady, new Promise(function (r) { setTimeout(r, 700); })]).then(function () { setTimeout(lift, 180); });
+    setTimeout(lift, 1600);
   }
 
   var introDelay = root.classList.contains('is-preloading') && !reduced ? 1700 : 0;
@@ -72,14 +95,34 @@
     if (url.pathname === location.pathname && url.hash) return;
     if (reduced || !curtain) return;
     e.preventDefault();
+    var label = pageLabel(url);
+    var labelEl = $('[data-curtain-label]');
+    if (labelEl) labelEl.textContent = label;
+    try { sessionStorage.setItem('st-transition', label); } catch (err) {}
     closeMenu();
-    try { sessionStorage.setItem('st-transition', '1'); } catch (err) {}
+    root.classList.remove('is-entering');
+    curtain.classList.remove('is-out');
     root.classList.add('is-leaving');
-    setTimeout(function () { location.href = url.href; }, 650);
+    setTimeout(function () { location.href = url.href; }, 1050);
   });
   window.addEventListener('pageshow', function (e) {
-    if (e.persisted) { root.classList.remove('is-leaving', 'is-entering'); }
+    if (e.persisted) { root.classList.remove('is-leaving', 'is-entering'); if (curtain) curtain.classList.remove('is-out'); }
   });
+
+  function pageLabel(url) {
+    var file = url.pathname.split('/').pop() || 'index.html';
+    var labels = {
+      'index.html': 'Home',
+      'about.html': 'About Sharon',
+      'services.html': 'Coaching',
+      'stories.html': 'Client stories',
+      'community.html': 'Women for Women\u2019s Truths',
+      'contact.html': 'Let\u2019s talk',
+      'terms-and-conditions.html': 'Terms'
+    };
+    if (/^#area-/.test(url.hash)) return 'Coaching';
+    return labels[file] || 'Sharon Tabak';
+  }
 
   /* ---------- Smooth scroll (desktop only) ---------- */
   var lenis = null;

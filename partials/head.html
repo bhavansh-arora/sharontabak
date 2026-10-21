@@ -17,7 +17,8 @@
     try {
       var s = window.sessionStorage;
       if (!s.getItem('st-visited')) { h.classList.add('is-preloading'); s.setItem('st-visited', '1'); }
-      if (s.getItem('st-transition')) { h.classList.add('is-entering'); s.removeItem('st-transition'); }
+      var t = s.getItem('st-transition');
+      if (t) { h.classList.add('is-entering'); window.__stLabel = t; s.removeItem('st-transition'); }
     } catch (e) {}
   })(document.documentElement);
 </script>
