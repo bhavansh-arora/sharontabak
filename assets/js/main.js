@@ -40,9 +40,9 @@
     introDone = true;
     if (root.classList.contains('is-preloading') && preloader) {
       preloader.classList.add('is-done');
-      setTimeout(function () { root.classList.remove('is-preloading'); }, 1000);
+      setTimeout(function () { root.classList.remove('is-preloading'); }, 1450);
     }
-    if (!root.classList.contains('is-entering')) setTimeout(startReveals, root.classList.contains('is-preloading') ? 650 : 120);
+    if (!root.classList.contains('is-entering')) setTimeout(startReveals, root.classList.contains('is-preloading') ? 700 : 120);
   }
 
   function landOnHash() {
@@ -74,15 +74,30 @@
     setTimeout(lift, 900);
   }
 
-  var introDelay = root.classList.contains('is-preloading') && !reduced ? 1700 : 0;
-  if (doc.readyState === 'complete') setTimeout(finishIntro, introDelay);
-  else {
-    var introStart = Date.now();
-    window.addEventListener('load', function () {
-      setTimeout(finishIntro, Math.max(0, introDelay - (Date.now() - introStart)));
-    });
-    // Never let a slow asset hold the page hostage
-    setTimeout(finishIntro, 3200);
+  var preloading = root.classList.contains('is-preloading') && preloader && !reduced;
+  if (preloading) {
+    /* Loading counter: climbs while the page loads, holds just short of 100
+       until it really has, then finishes and lifts the panels. */
+    var countEl = $('[data-preload-count]'), barEl = $('.preloader__bar i');
+    var loaded = doc.readyState === 'complete', shown = 0, t0 = performance.now();
+    window.addEventListener('load', function () { loaded = true; });
+    setTimeout(function () { loaded = true; }, 2800); // never wait on a slow asset for long
+    var tick = function (now) {
+      var elapsed = now - t0;
+      var target = Math.min(elapsed / 1350, 1) * (loaded ? 100 : 88);
+      shown += (target - shown) * 0.12;
+      if (loaded && elapsed > 1350 && shown > 99.3) shown = 100;
+      if (countEl) countEl.textContent = Math.round(shown);
+      if (barEl) barEl.style.transform = 'scaleX(' + (shown / 100).toFixed(3) + ')';
+      if (shown < 100) requestAnimationFrame(tick); else setTimeout(finishIntro, 120);
+    };
+    requestAnimationFrame(tick);
+    setTimeout(finishIntro, 4500); // failsafe
+  } else if (doc.readyState === 'complete') {
+    setTimeout(finishIntro, 0);
+  } else {
+    window.addEventListener('load', function () { finishIntro(); });
+    setTimeout(finishIntro, 3200); // never let a slow asset hold the page hostage
   }
 
   doc.addEventListener('click', function (e) {
