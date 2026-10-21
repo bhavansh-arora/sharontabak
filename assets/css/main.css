@@ -331,6 +331,11 @@ em { font-style: italic; }
 .curtain__mark { display: block; width: clamp(68px, 7vw, 92px); max-width: none; height: auto; overflow: visible; margin-bottom: clamp(22px, 3.4vh, 34px); }
 .curtain__frame { fill: none; stroke: var(--cobalt); stroke-width: 1; vector-effect: non-scaling-stroke; stroke-dasharray: 1; stroke-dashoffset: 1; }
 .curtain__mono { transform-box: fill-box; transform-origin: center; }
+/* a bright segment that keeps travelling round the diamond while the next
+   page loads; its phase follows the clock, so it carries on seamlessly
+   from one page to the next */
+.curtain__orbit { fill: none; stroke: var(--cobalt); stroke-width: 3; stroke-linecap: round; vector-effect: non-scaling-stroke; stroke-dasharray: 0.2 0.8; opacity: 0; animation: curtain-orbit 1.8s linear infinite; animation-delay: var(--orbit-delay, 0ms); }
+@keyframes curtain-orbit { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -1; } }
 .curtain__eyebrow { overflow: hidden; font-size: 0.7rem; letter-spacing: 0.32em; text-transform: uppercase; font-weight: 600; color: var(--muted); margin: 0 0 14px; }
 .curtain__label { margin: 0; overflow: hidden; padding: 0.08em 0.12em 0.22em; max-width: 13ch; text-wrap: balance; font-family: var(--serif); font-style: italic; font-weight: 500; font-variation-settings: "opsz" 28; font-size: clamp(2.3rem, 8.4vw, 5.6rem); line-height: 1.06; letter-spacing: -0.025em; color: var(--ink); }
 .curtain__label span, .curtain__eyebrow span { display: inline-block; }
@@ -352,7 +357,8 @@ em { font-style: italic; }
    can start from the very same still frame (no visible jump) */
 .is-leaving .curtain__foot { opacity: 1; transition: opacity 0.35s 0.3s; }
 .is-leaving .curtain__mono { opacity: 1; transform: none; transition: opacity 0.35s 0.28s, transform 0.55s 0.28s var(--ease); }
-.is-leaving .curtain__frame { stroke-dashoffset: 0; transition: stroke-dashoffset 0.55s 0.28s var(--ease-in-out); }
+.is-leaving .curtain__frame { stroke-dashoffset: 0; opacity: 0.35; transition: stroke-dashoffset 0.55s 0.28s var(--ease-in-out), opacity 0.4s 0.7s; }
+.is-leaving .curtain__orbit { opacity: 1; transition: opacity 0.3s 0.62s; }
 .is-leaving .curtain__eyebrow span { transform: none; transition: transform 0.5s 0.32s var(--ease); }
 .is-leaving .curtain__label span { transform: none; transition: transform 0.55s 0.3s var(--ease); }
 .is-leaving .curtain__bar i { transform: scaleX(0.6); transition: transform 0.5s 0.3s var(--ease-in-out); }
@@ -363,8 +369,11 @@ em { font-style: italic; }
 .is-entering .curtain__foot { opacity: 1; }
 .is-entering .curtain__mono { opacity: 1; transform: none; }
 .is-entering .curtain__label span, .is-entering .curtain__eyebrow span { transform: none; }
-.is-entering .curtain__frame { stroke-dashoffset: 0; }
-.is-entering .curtain__bar i { transform: scaleX(0.6); }
+.is-entering .curtain__frame { stroke-dashoffset: 0; opacity: 0.35; }
+.is-entering .curtain__orbit { opacity: 1; }
+.is-entering .curtain__bar i { transform: scaleX(var(--bar, 0.6)); }
+/* while the next page loads, the line keeps creeping so nothing looks frozen */
+.curtain.is-waiting .curtain__bar i { transform: scaleX(0.94); transition: transform 2.4s cubic-bezier(0.2, 0.5, 0.35, 1); }
 
 /* then lift away in reverse to reveal the page */
 .curtain.is-out .curtain__bar i { transform: scaleX(1); transition: transform 0.35s var(--ease-in-out); }
@@ -372,6 +381,7 @@ em { font-style: italic; }
 .curtain.is-out .curtain__eyebrow span { transform: translateY(-120%); transition: transform 0.45s var(--ease-in-out); }
 .curtain.is-out .curtain__mono { opacity: 0; transform: scale(1.06); transition: opacity 0.35s 0.1s, transform 0.5s 0.06s var(--ease-in-out); }
 .curtain.is-out .curtain__frame { stroke-dashoffset: -1; transition: stroke-dashoffset 0.5s var(--ease-in-out); }
+.curtain.is-out .curtain__orbit { opacity: 0; transition: opacity 0.25s; }
 .curtain.is-out .curtain__foot { opacity: 0; transition: opacity 0.3s 0.1s; }
 .curtain.is-out .curtain__panel { transform: translateY(-101%); transition: transform 0.8s var(--ease-in-out); }
 .curtain.is-out .curtain__panel--back { transition-delay: 0.2s; }

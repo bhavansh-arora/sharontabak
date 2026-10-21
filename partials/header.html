@@ -28,6 +28,7 @@
     <div class="curtain__inner">
       <svg class="curtain__mark" viewBox="0 0 140 196">
         <path class="curtain__frame" pathLength="1" d="M70 2 L138 98 L70 194 L2 98 Z"/>
+        <path class="curtain__orbit" pathLength="1" d="M70 2 L138 98 L70 194 L2 98 Z"/>
         <image class="curtain__mono" href="assets/img/monogram.png" x="42.5" y="59.5" width="55" height="77"/>
       </svg>
       <p class="curtain__eyebrow"><span data-curtain-chapter>Sharon Tabak Coaching</span></p>
@@ -40,7 +41,7 @@
     </div>
   </div>
 </div>
-<script>(function(){var t=(window.__stLabel||'').split('|');if(!t[0])return;var l=document.querySelector('[data-curtain-label]'),c=document.querySelector('[data-curtain-chapter]');if(l)l.textContent=t[0];if(c&&t[1])c.textContent=t[1];})();</script>
+<script>(function(){document.querySelector('.curtain').style.setProperty('--orbit-delay',-(Date.now()%1800)+'ms');var t=(window.__stLabel||'').split('|');if(!t[0])return;var l=document.querySelector('[data-curtain-label]'),c=document.querySelector('[data-curtain-chapter]');if(l)l.textContent=t[0];if(c&&t[1])c.textContent=t[1];try{var b=sessionStorage.getItem('st-bar');if(b){document.querySelector('.curtain').style.setProperty('--bar',b);sessionStorage.removeItem('st-bar');}}catch(e){}})();</script>
 
 <header class="site-header" data-header>
   <div class="site-header__inner wrap">

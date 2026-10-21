@@ -64,12 +64,14 @@
       if (lifted) return; lifted = true;
       root.classList.add('is-lifting'); root.style.backgroundColor = '';
       landOnHash();
+      curtain.classList.remove('is-waiting');
       curtain.classList.add('is-out');
       setTimeout(startReveals, 760); // headlines rise just as the panels uncover them
       setTimeout(function () { root.classList.remove('is-entering', 'is-lifting'); curtain.classList.remove('is-out'); }, 1250);
     };
     var fontsReady = doc.fonts && doc.fonts.ready ? doc.fonts.ready : Promise.resolve();
     var painted = new Promise(function (r) { requestAnimationFrame(function () { requestAnimationFrame(r); }); });
+    painted.then(function () { if (!lifted) curtain.classList.add('is-waiting'); });
     var hold = new Promise(function (r) { setTimeout(r, 140); });
     // hold the exact frame the last page ended on until this page is really
     // on screen (and fonts are ready), then lift
@@ -77,30 +79,46 @@
     setTimeout(lift, 1000);
   }
 
+  /* "Ready" means what the visitor actually sees first: fonts and the photos
+     on screen. Never the calendar, videos or other slow third-party embeds. */
+  function firstScreenReady() {
+    var fonts = doc.fonts && doc.fonts.ready ? doc.fonts.ready : Promise.resolve();
+    var vh0 = window.innerHeight;
+    var imgs = $$('img').filter(function (im) {
+      if (im.loading === 'lazy' || im.complete) return false;
+      if (im.closest('.preloader, .curtain')) return false;
+      var r = im.getBoundingClientRect();
+      return r.width > 0 && r.top < vh0 && r.bottom > 0;
+    });
+    var imgsReady = Promise.all(imgs.map(function (im) {
+      return new Promise(function (res) { im.addEventListener('load', res, { once: true }); im.addEventListener('error', res, { once: true }); });
+    }));
+    return Promise.race([Promise.all([fonts, imgsReady]), new Promise(function (res) { setTimeout(res, 2200); })]);
+  }
+
   var preloading = root.classList.contains('is-preloading') && preloader && !reduced;
   if (preloading) {
-    /* Loading counter: climbs while the page loads, holds just short of 100
-       until it really has, then finishes and lifts the panels. */
+    /* Loading counter: climbs to 88% over the intro, keeps creeping (never
+       freezes) if the first screen is still loading, then finishes at 100%. */
     var countEl = $('[data-preload-count]'), barEl = $('.preloader__bar i');
-    var loaded = doc.readyState === 'complete', shown = 0, t0 = performance.now();
-    window.addEventListener('load', function () { loaded = true; });
-    setTimeout(function () { loaded = true; }, 2800); // never wait on a slow asset for long
+    var ready = false, shown = 0, t0 = performance.now();
+    firstScreenReady().then(function () { ready = true; });
     var tick = function (now) {
-      var elapsed = now - t0;
-      var target = Math.min(elapsed / 1350, 1) * (loaded ? 100 : 88);
+      var elapsed = now - t0, target;
+      if (elapsed < 1350) target = (elapsed / 1350) * (ready ? 100 : 88);
+      else target = ready ? 100 : 88 + 11 * (1 - Math.exp(-(elapsed - 1350) / 900));
       shown += (target - shown) * 0.12;
-      if (loaded && elapsed > 1350 && shown > 99.3) shown = 100;
+      if (target === 100 && shown > 99.3) shown = 100;
       if (countEl) countEl.textContent = Math.round(shown);
       if (barEl) barEl.style.transform = 'scaleX(' + (shown / 100).toFixed(3) + ')';
       if (shown < 100) requestAnimationFrame(tick); else setTimeout(finishIntro, 120);
     };
     requestAnimationFrame(tick);
-    setTimeout(finishIntro, 4500); // failsafe
-  } else if (doc.readyState === 'complete') {
-    setTimeout(finishIntro, 0);
+    setTimeout(finishIntro, 4000); // failsafe
   } else {
-    window.addEventListener('load', function () { finishIntro(); });
-    setTimeout(finishIntro, 3200); // never let a slow asset hold the page hostage
+    // the page script runs once the HTML is ready; no need to wait for
+    // every image, video or embed before starting the reveals
+    setTimeout(finishIntro, 0);
   }
 
   doc.addEventListener('click', function (e) {
@@ -125,10 +143,17 @@
     curtain.classList.remove('is-out');
     if (lenis) lenis.stop(); // nothing should scroll under the curtain
     root.classList.add('is-leaving');
+    setTimeout(function () { curtain.classList.add('is-waiting'); }, 820);
     setTimeout(function () { location.href = url.href; }, 920);
   });
+  window.addEventListener('pagehide', function () {
+    if (!root.classList.contains('is-leaving')) return;
+    var bar = $('.curtain__bar i'); if (!bar) return;
+    var m = getComputedStyle(bar).transform.match(/matrix\(([^,]+)/);
+    try { if (m) sessionStorage.setItem('st-bar', parseFloat(m[1]).toFixed(3)); } catch (err) {}
+  });
   window.addEventListener('pageshow', function (e) {
-    if (e.persisted) { root.classList.remove('is-leaving', 'is-entering'); if (curtain) curtain.classList.remove('is-out'); if (lenis) lenis.start(); }
+    if (e.persisted) { root.classList.remove('is-leaving', 'is-entering'); if (curtain) curtain.classList.remove('is-out', 'is-waiting'); if (lenis) lenis.start(); }
   });
 
   var prefetched = {};
@@ -431,12 +456,20 @@
         } else if (!v.paused) v.pause();
       });
     }, { rootMargin: '200px 0px' });
-    bgVideos.forEach(function (v) {
-      v.muted = true;
-      // purely decorative videos stay as still images on phones and tablets
-      if (v.getAttribute('data-bg-video') === 'desktop' && !finePointer) return;
-      vio.observe(v);
-    });
+    // start background videos only once the opening animation has finished,
+    // so loading/decoding them never stutters the page transition
+    (function whenSettled() {
+      if (root.classList.contains('intro-done') && !root.classList.contains('is-entering') && !root.classList.contains('is-preloading')) {
+        setTimeout(function () {
+          bgVideos.forEach(function (v) {
+            v.muted = true;
+            // purely decorative videos stay as still images on phones and tablets
+            if (v.getAttribute('data-bg-video') === 'desktop' && !finePointer) return;
+            vio.observe(v);
+          });
+        }, 150);
+      } else setTimeout(whenSettled, 200);
+    })();
   }
 
   /* ---------- Inline film (click to play with sound) ---------- */
@@ -512,10 +545,16 @@
       f.addEventListener('load', function () { var ph = $('.calendar__placeholder', box); if (ph) ph.remove(); });
       box.appendChild(f);
     }
-    if ('IntersectionObserver' in window) {
-      var o = new IntersectionObserver(function (en) { if (en[0].isIntersecting) { load(); o.disconnect(); } }, { rootMargin: '300px' });
-      o.observe(box);
-    } else load();
+    function start() {
+      if ('IntersectionObserver' in window) {
+        var o = new IntersectionObserver(function (en) { if (en[0].isIntersecting) { load(); o.disconnect(); } }, { rootMargin: '300px' });
+        o.observe(box);
+      } else load();
+    }
+    (function whenSettled() {
+      if (root.classList.contains('intro-done') && !root.classList.contains('is-entering') && !root.classList.contains('is-preloading')) setTimeout(start, 200);
+      else setTimeout(whenSettled, 250);
+    })();
   });
 
   /* Testimonial video lightbox */
