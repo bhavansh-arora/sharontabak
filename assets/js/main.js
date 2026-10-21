@@ -282,7 +282,7 @@
     for (var s = 0; s < scrubs.length; s++) {
       var sc = scrubs[s];
       var sr = sc.el.getBoundingClientRect();
-      var sp = clamp((vh * 0.85 - sr.top) / (sr.height + vh * 0.35), 0, 1);
+      var sp = clamp((vh * 0.92 - sr.top) / (sr.height * 0.85 + vh * 0.12), 0, 1);
       var lit = Math.floor(sp * sc.words.length);
       if (lit !== sc.lit) {
         for (var w = 0; w < sc.words.length; w++) sc.words[w].classList.toggle('lit', w < lit);
