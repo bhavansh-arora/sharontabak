@@ -62,14 +62,16 @@
     var lifted = false;
     var lift = function () {
       if (lifted) return; lifted = true;
+      root.classList.add('is-lifting'); root.style.backgroundColor = '';
       landOnHash();
       curtain.classList.add('is-out');
       setTimeout(startReveals, 650);
-      setTimeout(function () { root.classList.remove('is-entering'); curtain.classList.remove('is-out'); }, 1500);
+      setTimeout(function () { root.classList.remove('is-entering', 'is-lifting'); curtain.classList.remove('is-out'); }, 1500);
     };
     var fontsReady = doc.fonts && doc.fonts.ready ? doc.fonts.ready : Promise.resolve();
-    Promise.race([fontsReady, new Promise(function (r) { setTimeout(r, 700); })]).then(function () { setTimeout(lift, 180); });
-    setTimeout(lift, 1600);
+    // fonts are cached after the first page, so this is usually instant
+    Promise.race([fontsReady, new Promise(function (r) { setTimeout(r, 380); })]).then(function () { setTimeout(lift, 60); });
+    setTimeout(lift, 900);
   }
 
   var introDelay = root.classList.contains('is-preloading') && !reduced ? 1700 : 0;
@@ -105,7 +107,7 @@
     curtain.classList.remove('is-out');
     if (lenis) lenis.stop(); // nothing should scroll under the curtain
     root.classList.add('is-leaving');
-    setTimeout(function () { location.href = url.href; }, 1050);
+    setTimeout(function () { location.href = url.href; }, 880);
   });
   window.addEventListener('pageshow', function (e) {
     if (e.persisted) { root.classList.remove('is-leaving', 'is-entering'); if (curtain) curtain.classList.remove('is-out'); if (lenis) lenis.start(); }
@@ -503,9 +505,11 @@
   /* ---------- Rails (drag + buttons + progress) ---------- */
   $$('[data-rail]').forEach(function (rail) {
     var track = $('.rail__track', rail);
-    var prev = $('[data-rail-prev]', rail);
-    var next = $('[data-rail-next]', rail);
-    var bar = $('.rail__bar', rail);
+    // the arrows live in the section heading, so look in the whole section
+    var scope = rail.closest('section') || rail;
+    var prev = $('[data-rail-prev]', scope);
+    var next = $('[data-rail-next]', scope);
+    var bar = $('.rail__bar', scope);
     if (!track) return;
     function step() { var c = track.firstElementChild; return c ? c.getBoundingClientRect().width + 20 : 300; }
     function update() {
@@ -515,8 +519,15 @@
       if (prev) prev.disabled = track.scrollLeft < 4;
       if (next) next.disabled = track.scrollLeft > max - 4;
     }
-    if (prev) prev.addEventListener('click', function () { track.scrollBy({ left: -step(), behavior: 'smooth' }); });
-    if (next) next.addEventListener('click', function () { track.scrollBy({ left: step(), behavior: 'smooth' }); });
+    if (prev) prev.addEventListener('click', function () { track.scrollBy({ left: -step(), behavior: reduced ? 'auto' : 'smooth' }); });
+    if (next) next.addEventListener('click', function () { track.scrollBy({ left: step(), behavior: reduced ? 'auto' : 'smooth' }); });
+    // keyboard: left/right arrows move the slider when it has focus
+    track.setAttribute('tabindex', '0');
+    track.setAttribute('aria-label', 'Client stories, scroll sideways');
+    track.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight') { e.preventDefault(); track.scrollBy({ left: step(), behavior: 'smooth' }); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); track.scrollBy({ left: -step(), behavior: 'smooth' }); }
+    });
     track.addEventListener('scroll', update, { passive: true });
     window.addEventListener('resize', update);
     update();

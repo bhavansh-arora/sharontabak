@@ -28,11 +28,11 @@
       var s = window.sessionStorage;
       if (!s.getItem('st-visited')) { h.classList.add('is-preloading'); s.setItem('st-visited', '1'); }
       var t = s.getItem('st-transition');
-      if (t) { h.classList.add('is-entering'); window.__stLabel = t; s.removeItem('st-transition'); }
+      if (t) { h.classList.add('is-entering'); h.style.backgroundColor = '#071f42'; window.__stLabel = t; s.removeItem('st-transition'); }
     } catch (e) {}
   })(document.documentElement);
 </script>
-<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js" defer></script>
+<script src="assets/js/vendor/lenis.min.js" defer></script>
 <script src="assets/js/main.js" defer></script>
 <!-- /include:head -->
 </head>
