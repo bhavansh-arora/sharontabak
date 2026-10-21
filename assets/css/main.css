@@ -420,9 +420,12 @@ em { font-style: italic; }
 .js .is-split.is-in .w__i { transform: none; opacity: 1; }
 
 /* scroll-scrubbed paragraph */
-.scrub .sw { opacity: 0.32; transition: opacity 0.35s, color 0.35s; }
-.scrub .sw.lit { opacity: 1; }
-.no-scrub .scrub .sw { opacity: 1; }
+.scrub .sw { display: inline-block; opacity: 0.2; transform: translateY(0.16em); transition: opacity 0.6s var(--ease), transform 0.8s var(--ease); }
+.scrub .sw.lit { opacity: 1; transform: none; animation: sw-tint 1.3s var(--ease) both; }
+.section--ink .scrub .sw.lit, .section--cobalt .scrub .sw.lit { animation-name: sw-tint-light; }
+@keyframes sw-tint { from { color: var(--cobalt-2); } }
+@keyframes sw-tint-light { from { color: var(--sky); } }
+.no-scrub .scrub .sw { opacity: 1; transform: none; animation: none; }
 
 /* ---------- 8. Media helpers ---------- */
 .media { position: relative; overflow: hidden; border-radius: var(--radius); background: var(--sand); }
@@ -1138,7 +1141,7 @@ a.pillar:hover .pillar__media img { transform: scale(1.06); }
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; transition-delay: 0s !important; scroll-behavior: auto !important; }
   .marquee__track { animation: none; }
   .js [data-reveal], .js [data-reveal] > *, .js [data-stagger] > *, .js .is-split .w__i { opacity: 1 !important; transform: none !important; clip-path: none !important; filter: none !important; }
-  .scrub .sw { opacity: 1 !important; }
+  .scrub .sw { opacity: 1 !important; transform: none !important; animation: none !important; }
   .preloader { display: none !important; }
 }
 
