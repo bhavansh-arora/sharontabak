@@ -18,7 +18,7 @@
       var s = window.sessionStorage;
       if (!s.getItem('st-visited')) { h.classList.add('is-preloading'); s.setItem('st-visited', '1'); }
       var t = s.getItem('st-transition');
-      if (t) { h.classList.add('is-entering'); h.style.backgroundColor = '#071f42'; window.__stLabel = t; s.removeItem('st-transition'); }
+      if (t) { h.classList.add('is-entering'); h.style.backgroundColor = '#f3eee6'; window.__stLabel = t; s.removeItem('st-transition'); }
     } catch (e) {}
   })(document.documentElement);
 </script>
