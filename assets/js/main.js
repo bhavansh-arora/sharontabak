@@ -42,7 +42,7 @@
       preloader.classList.add('is-done');
       setTimeout(function () { root.classList.remove('is-preloading'); }, 1450);
     }
-    if (!root.classList.contains('is-entering')) setTimeout(startReveals, root.classList.contains('is-preloading') ? 700 : 120);
+    if (!root.classList.contains('is-entering')) setTimeout(startReveals, root.classList.contains('is-preloading') ? 950 : 120);
   }
 
   function landOnHash() {
@@ -65,13 +65,16 @@
       root.classList.add('is-lifting'); root.style.backgroundColor = '';
       landOnHash();
       curtain.classList.add('is-out');
-      setTimeout(startReveals, 650);
-      setTimeout(function () { root.classList.remove('is-entering', 'is-lifting'); curtain.classList.remove('is-out'); }, 1500);
+      setTimeout(startReveals, 760); // headlines rise just as the panels uncover them
+      setTimeout(function () { root.classList.remove('is-entering', 'is-lifting'); curtain.classList.remove('is-out'); }, 1250);
     };
     var fontsReady = doc.fonts && doc.fonts.ready ? doc.fonts.ready : Promise.resolve();
-    // fonts are cached after the first page, so this is usually instant
-    Promise.race([fontsReady, new Promise(function (r) { setTimeout(r, 380); })]).then(function () { setTimeout(lift, 60); });
-    setTimeout(lift, 900);
+    var painted = new Promise(function (r) { requestAnimationFrame(function () { requestAnimationFrame(r); }); });
+    var hold = new Promise(function (r) { setTimeout(r, 140); });
+    // hold the exact frame the last page ended on until this page is really
+    // on screen (and fonts are ready), then lift
+    Promise.all([painted, hold, Promise.race([fontsReady, new Promise(function (r) { setTimeout(r, 400); })])]).then(lift);
+    setTimeout(lift, 1000);
   }
 
   var preloading = root.classList.contains('is-preloading') && preloader && !reduced;
@@ -122,11 +125,23 @@
     curtain.classList.remove('is-out');
     if (lenis) lenis.stop(); // nothing should scroll under the curtain
     root.classList.add('is-leaving');
-    setTimeout(function () { location.href = url.href; }, 880);
+    setTimeout(function () { location.href = url.href; }, 920);
   });
   window.addEventListener('pageshow', function (e) {
     if (e.persisted) { root.classList.remove('is-leaving', 'is-entering'); if (curtain) curtain.classList.remove('is-out'); if (lenis) lenis.start(); }
   });
+
+  var prefetched = {};
+  function prefetch(e) {
+    var a = e.target.closest && e.target.closest('a[href]');
+    if (!a || a.target === '_blank' || a.hasAttribute('data-book')) return;
+    var url; try { url = new URL(a.href, location.href); } catch (err) { return; }
+    if (url.origin !== location.origin || url.pathname === location.pathname) return;
+    var key = url.pathname; if (prefetched[key]) return; prefetched[key] = 1;
+    var l = doc.createElement('link'); l.rel = 'prefetch'; l.href = url.pathname; doc.head.appendChild(l);
+  }
+  doc.addEventListener('pointerover', prefetch, { passive: true });
+  doc.addEventListener('touchstart', prefetch, { passive: true });
 
   // Destination name + "chapter" shown on the branded page transition
   function pageLabel(url) {
