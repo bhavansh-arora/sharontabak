@@ -130,13 +130,31 @@
 <main id="main">
 
   <section class="phero" aria-labelledby="stories-title">
-    <div class="wrap">
-      <nav class="phero__crumb" aria-label="Breadcrumb" data-reveal><a href="index.html">Home</a><span aria-hidden="true">/</span><span>Stories</span></nav>
-      <p class="eyebrow" data-reveal>Client kind words</p>
-      <h1 class="display phero__title" id="stories-title" data-split>Stories of finding <em>the way back to yourself.</em></h1>
-      <div class="head" style="margin:0">
+    <div class="wrap phero__grid phero__grid--center">
+      <div>
+        <nav class="phero__crumb" aria-label="Breadcrumb" data-reveal><a href="index.html">Home</a><span aria-hidden="true">/</span><span>Stories</span></nav>
+        <p class="eyebrow" data-reveal>Client kind words</p>
+        <h1 class="h1 phero__title" id="stories-title" data-split>Stories of finding <em>the way back to yourself.</em></h1>
         <p class="lead" data-reveal style="--d:.3s">Real people, real turning points. Press play to hear them in their own voices.</p>
-        <div class="head__side" data-reveal style="--d:.4s"><a class="link-arrow" href="#written">Jump to written stories<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+        <div class="phero__actions" data-reveal style="--d:.45s">
+          <a class="btn btn--ink btn--xl" href="https://calendly.com/sharontabak-sharontabak/30min" target="_blank" rel="noopener" data-book data-magnetic><span class="btn__label">Start your story</span><svg class="btn__arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="link-arrow" href="#written">Read written stories <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div>
+      </div>
+      <div class="proof" data-reveal style="--d:.25s">
+        <div class="proof__avatars">
+          <img src="assets/img/poster-testimonial-maria.webp" alt="" loading="eager">
+          <img src="assets/img/poster-testimonial-suling.webp" alt="" loading="eager">
+          <img src="assets/img/poster-testimonial-kyrylo.webp" alt="" loading="eager">
+          <span>+2</span>
+        </div>
+        <p class="proof__label">5 client stories &middot; 3 on video</p>
+        <blockquote class="proof__quote">&ldquo;Each session leaves me feeling more empowered, motivated and confident in the direction I&rsquo;m taking.&rdquo;</blockquote>
+        <p class="proof__by">Kyrylo Yalovyi &middot; Coaching client</p>
+        <div class="proof__foot">
+          <img src="assets/img/jay-shetty.webp" alt="">
+          <span>Endorsed by <strong>Jay Shetty</strong><small>Storyteller, podcaster &amp; former monk</small></span>
+        </div>
       </div>
     </div>
   </section>
@@ -223,13 +241,18 @@
     </div>
   </section>
 
-  <figure class="bigquote" data-header-theme="light" style="margin:0">
-    <div class="bigquote__bg" data-parallax="0.12" aria-hidden="true"><img src="assets/img/tide-800.webp" srcset="assets/img/tide-800.webp 800w, assets/img/tide.webp 1600w" sizes="100vw" alt="" loading="lazy"></div>
-    <div class="wrap">
-      <blockquote data-split>Your story could be <em>the next one.</em></blockquote>
-      <figcaption data-reveal>It starts with one conversation</figcaption>
+  <section class="quote-band" aria-label="A note from Sharon">
+    <div class="wrap quote-band__grid">
+      <div class="media media--arch quote-band__media" data-reveal="clip">
+        <div class="parallax-img" data-parallax="0.05"><img src="assets/img/candle-800.webp" srcset="assets/img/candle-800.webp 800w, assets/img/candle.webp 1200w" sizes="(max-width: 720px) 62vw, 30vw" alt="A hand lighting a candle" loading="lazy"></div>
+      </div>
+      <figure class="quote-band__fig">
+        <div class="quote-band__mark" aria-hidden="true"><img src="assets/img/monogram.png" alt="" width="771" height="1080"><span></span></div>
+        <blockquote class="quote-band__text" data-split>Your story could be <em>the next one.</em></blockquote>
+        <figcaption class="quote-band__by" data-reveal><img src="assets/img/sharon-portrait-800.webp" alt="" loading="lazy"><span><strong>It starts with one conversation</strong>Free, 30 minutes, no pressure</span></figcaption>
+      </figure>
     </div>
-  </figure>
+  </section>
 
 </main>
 

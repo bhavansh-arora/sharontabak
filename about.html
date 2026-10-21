@@ -130,12 +130,21 @@
 <main id="main">
 
   <section class="phero" aria-labelledby="about-title">
-    <div class="wrap phero__grid">
+    <div class="wrap phero__grid phero__grid--center">
       <div>
         <nav class="phero__crumb" aria-label="Breadcrumb" data-reveal><a href="index.html">Home</a><span aria-hidden="true">/</span><span>About</span></nav>
         <p class="eyebrow" data-reveal>Meet Sharon</p>
         <h1 class="h1 phero__title" id="about-title" data-split>I&rsquo;ve been <em>where you are.</em></h1>
         <p class="lead" data-reveal style="--d:.3s">I&rsquo;ve walked through the loneliness, the anxiety, the pain of broken relationships, and the exhaustion of trying to keep it all together. I&rsquo;ve also found a way through&mdash;and now I&rsquo;m here to help you do the same.</p>
+        <div class="phero__actions" data-reveal style="--d:.45s">
+          <a class="btn btn--ink btn--xl" href="https://calendly.com/sharontabak-sharontabak/30min" target="_blank" rel="noopener" data-book data-magnetic><span class="btn__label">Book a free call</span><svg class="btn__arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="link-arrow" href="#story">Read my story <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div>
+        <ul class="phero__facts" data-stagger>
+          <li><strong>4+ years</strong><span>supporting women through life&rsquo;s hardest moments</span></li>
+          <li><strong>18&ndash;100</strong><span>men &amp; women from all walks of life</span></li>
+          <li><strong>Certified</strong><span>Jay Shetty Life Coach</span></li>
+        </ul>
       </div>
       <div class="ahero__visual">
         <div class="media media--arch" data-reveal="clip" style="--d:.15s">
@@ -160,7 +169,7 @@
     </div>
   </div>
 
-  <section class="section" aria-labelledby="story-title">
+  <section class="section" id="story" aria-labelledby="story-title">
     <div class="wrap split">
       <div class="split__sticky">
         <div class="media" data-reveal="clip">
@@ -202,11 +211,19 @@
   </section>
 
   <section class="section section--paper mirror" aria-labelledby="mirror-title">
-    <div class="wrap">
-      <img class="mirror__diamond" src="assets/img/monogram.png" alt="" width="771" height="1080" data-reveal loading="lazy">
-      <p class="eyebrow eyebrow--plain" data-reveal id="mirror-title">My approach</p>
-      <p class="mirror__text" data-split>Think of it like holding up a mirror&mdash;you get to see yourself <em>more clearly.</em></p>
-      <p class="lead" style="margin-inline:auto" data-reveal>My role is to guide you in spotting what might be holding you back, getting clear on what really matters to you, and taking intentional steps toward the life you want, making choices that truly align with your purpose.</p>
+    <div class="wrap mirror__grid">
+      <div class="mirror__side" data-reveal="clip">
+        <div class="media media--arch"><img src="assets/img/sharon-portrait-800.webp" alt="Sharon Tabak" loading="lazy"></div>
+      </div>
+      <div class="mirror__center">
+        <img class="mirror__diamond" src="assets/img/monogram.png" alt="" width="771" height="1080" data-reveal loading="lazy">
+        <p class="eyebrow eyebrow--plain" data-reveal id="mirror-title">My approach</p>
+        <p class="mirror__text" data-split>Think of it like holding up a mirror&mdash;you get to see yourself <em>more clearly.</em></p>
+        <p class="lead" style="margin-inline:auto" data-reveal>My role is to guide you in spotting what might be holding you back, getting clear on what really matters to you, and taking intentional steps toward the life you want, making choices that truly align with your purpose.</p>
+      </div>
+      <div class="mirror__side mirror__side--reflect" data-reveal="clip" style="--d:.15s" aria-hidden="true">
+        <div class="media media--arch"><img src="assets/img/sharon-portrait-800.webp" alt="" loading="lazy"></div>
+      </div>
     </div>
   </section>
 

@@ -130,11 +130,21 @@
 <main id="main">
 
   <section class="phero" style="padding-bottom:clamp(40px,5vw,70px)" aria-labelledby="contact-title">
-    <div class="wrap">
-      <nav class="phero__crumb" aria-label="Breadcrumb" data-reveal><a href="index.html">Home</a><span aria-hidden="true">/</span><span>Contact</span></nav>
-      <p class="eyebrow" data-reveal>Ready to begin?</p>
-      <h1 class="display phero__title" id="contact-title" data-split>Let&rsquo;s <em>talk.</em></h1>
-      <p class="lead" data-reveal style="--d:.3s">No pressure, no cost. Just a heartfelt conversation to see how we can work together.</p>
+    <div class="wrap phero__grid phero__grid--center">
+      <div>
+        <nav class="phero__crumb" aria-label="Breadcrumb" data-reveal><a href="index.html">Home</a><span aria-hidden="true">/</span><span>Contact</span></nav>
+        <p class="eyebrow" data-reveal>Ready to begin?</p>
+        <h1 class="display phero__title" id="contact-title" data-split>Let&rsquo;s <em>talk.</em></h1>
+        <p class="lead" data-reveal style="--d:.3s">No pressure, no cost. Just a heartfelt conversation to see how we can work together.</p>
+        <div class="phero__actions" data-reveal style="--d:.45s">
+          <a class="btn btn--ink btn--xl" href="#book"><span class="btn__label">Choose a time</span><svg class="btn__arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="link-arrow" href="#message">Send a message <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div>
+      </div>
+      <div class="chero-visual" data-reveal style="--d:.2s">
+        <div class="media chero-visual__media"><img src="assets/img/sharon-studio-800.webp" srcset="assets/img/sharon-studio-800.webp 800w, assets/img/sharon-studio.webp 1600w" sizes="(max-width: 1024px) 90vw, 40vw" alt="Sharon Tabak in her studio" fetchpriority="high"></div>
+        <div class="chero-visual__badge"><span class="dock__pulse" aria-hidden="true"></span><span><strong>Free 30-min discovery call</strong><small>Pick any open time below</small></span></div>
+      </div>
     </div>
   </section>
 
@@ -162,7 +172,7 @@
     </div>
   </section>
 
-  <section class="section" aria-labelledby="msg-title">
+  <section class="section" id="message" aria-labelledby="msg-title">
     <div class="wrap contact">
       <div>
         <p class="eyebrow" data-reveal>Prefer to write?</p>
