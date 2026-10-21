@@ -1052,7 +1052,7 @@ a.pillar:hover .pillar__media img { transform: scale(1.06); }
   .split__sticky, .faq__aside, .legal__toc { position: relative; top: 0; }
   .endorse__visual { max-width: 440px; }
   .wfwt__visual { max-width: 480px; margin-bottom: 40px; }
-  .ahero__visual { max-width: 480px; margin-left: auto; }
+  .ahero__visual { width: 100%; max-width: 480px; margin-left: auto; }
   .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .stat:nth-child(3) { padding-left: 0; border-left: 0; }
   .stat:nth-child(n+3) { border-top: 1px solid var(--line); margin-top: 28px; }
@@ -1080,11 +1080,11 @@ a.pillar:hover .pillar__media img { transform: scale(1.06); }
 
 @media (max-width: 720px) {
   .hero { padding-top: calc(var(--header-h) + 24px); }
-  .hero__visual { width: 82%; margin-right: 0; margin-left: 12%; }
-  .hero__badge { right: -10%; top: -6%; }
-  .hero__badge .badge { width: 96px; }
-  .hero__diamond { left: -18%; width: 46%; }
-  .hero__tag { right: auto; left: 10%; bottom: -6%; font-size: 0.76rem; }
+  .hero__visual { width: 74%; margin-inline: auto; }
+  .hero__badge { right: -9%; top: -5%; }
+  .hero__badge .badge { width: 92px; }
+  .hero__diamond { left: -11%; width: 42%; }
+  .hero__tag { left: 0; right: 0; margin-inline: auto; width: max-content; max-width: calc(100% + 24px); bottom: -7%; font-size: 0.76rem; }
   .hero__facts { grid-template-columns: 1fr; gap: 18px; }
   .fact { display: flex; align-items: baseline; gap: 14px; }
   .fact strong { font-size: 1.6rem; margin: 0; min-width: 4.6ch; white-space: nowrap; }
@@ -1111,8 +1111,8 @@ a.pillar:hover .pillar__media img { transform: scale(1.06); }
   .footer__col--cta { grid-column: 1 / -1; }
   .footer__bottom { flex-direction: column; padding-bottom: 110px; }
   .faq__a > div { padding-right: 0; }
-  .ahero__sign { left: -4%; bottom: -6%; }
-  .wfwt__visual .media--small { right: -4%; }
+  .ahero__sign { left: 14px; bottom: 14px; }
+  .wfwt__visual .media--small { right: 6%; }
   .endorse__seal { right: 2%; bottom: -6%; }
   .endorse__seal .badge { width: 100px; }
   .rail__track { grid-auto-columns: 82vw; }
@@ -1147,7 +1147,7 @@ a.pillar:hover .pillar__media img { transform: scale(1.06); }
 @media (hover: none) {
   body::after { display: none; }
   /* solid header instead of live blur: no repaint on every scroll frame */
-  .site-header::before { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(243, 238, 230, 0.97); }
+  .site-header::before { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--bone); }
   /* image reveals become a simple fade, which the GPU handles for free */
   .js [data-reveal="clip"] > * { clip-path: none; opacity: 0; transition: opacity 0.9s var(--ease); transition-delay: var(--d, 0s); }
   .js [data-reveal="clip"].is-in > * { opacity: 1; }
@@ -1248,6 +1248,7 @@ a.pillar:hover .pillar__media img { transform: scale(1.06); }
   .focus4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .proof { max-width: 560px; }
   .chero-visual { max-width: 640px; }
+  .chero-visual__badge { left: 16px; }
 }
 @media (max-width: 720px) {
   .phero__facts { grid-template-columns: 1fr; }
