@@ -95,39 +95,41 @@
     if (url.pathname === location.pathname && url.hash) return;
     if (reduced || !curtain) return;
     e.preventDefault();
-    var label = pageLabel(url);
-    var labelEl = $('[data-curtain-label]');
-    if (labelEl) labelEl.textContent = label;
-    try { sessionStorage.setItem('st-transition', label); } catch (err) {}
+    var dest = pageLabel(url);
+    var labelEl = $('[data-curtain-label]'), chapterEl = $('[data-curtain-chapter]');
+    if (labelEl) labelEl.textContent = dest[0];
+    if (chapterEl) chapterEl.textContent = dest[1];
+    try { sessionStorage.setItem('st-transition', dest[0] + '|' + dest[1]); } catch (err) {}
     closeMenu();
     root.classList.remove('is-entering');
     curtain.classList.remove('is-out');
+    if (lenis) lenis.stop(); // nothing should scroll under the curtain
     root.classList.add('is-leaving');
     setTimeout(function () { location.href = url.href; }, 1050);
   });
   window.addEventListener('pageshow', function (e) {
-    if (e.persisted) { root.classList.remove('is-leaving', 'is-entering'); if (curtain) curtain.classList.remove('is-out'); }
+    if (e.persisted) { root.classList.remove('is-leaving', 'is-entering'); if (curtain) curtain.classList.remove('is-out'); if (lenis) lenis.start(); }
   });
 
+  // Destination name + "chapter" shown on the branded page transition
   function pageLabel(url) {
     var file = url.pathname.split('/').pop() || 'index.html';
-    var labels = {
-      'index.html': 'Home',
-      'about.html': 'About Sharon',
-      'services.html': 'Coaching',
-      'stories.html': 'Client stories',
-      'community.html': 'Women for Women\u2019s Truths',
-      'contact.html': 'Let\u2019s talk',
-      'terms-and-conditions.html': 'Terms'
+    var pages = {
+      'index.html': ['Home', 'Chapter 01'],
+      'about.html': ['About Sharon', 'Chapter 02'],
+      'services.html': ['Coaching', 'Chapter 03'],
+      'stories.html': ['Client stories', 'Chapter 04'],
+      'community.html': ['Women for Women\u2019s Truths', 'Chapter 05'],
+      'contact.html': ['Let\u2019s talk', 'Chapter 06'],
+      'terms-and-conditions.html': ['Terms', 'Sharon Tabak Coaching']
     };
-    if (/^#area-/.test(url.hash)) return 'Coaching';
-    return labels[file] || 'Sharon Tabak';
+    return pages[file] || ['Sharon Tabak', 'Sharon Tabak Coaching'];
   }
 
   /* ---------- Smooth scroll (desktop only) ---------- */
   var lenis = null;
   if (!reduced && finePointer && window.Lenis) {
-    lenis = new window.Lenis({ duration: 1.15, easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); }, smoothWheel: true });
+    lenis = new window.Lenis({ lerp: 0.16, wheelMultiplier: 1.05, smoothWheel: true });
     var rafLenis = function (t) { lenis.raf(t); requestAnimationFrame(rafLenis); };
     requestAnimationFrame(rafLenis);
   }
@@ -150,19 +152,13 @@
   var header = $('[data-header]');
   var lastY = window.scrollY;
   var darkZones = $$('[data-header-theme="light"]');
-  function updateHeader(y) {
+  function updateHeader(y, light) {
     if (!header) return;
     header.classList.toggle('is-scrolled', y > 40);
-    var goingDown = y > lastY && y > 400;
-    if (!root.classList.contains('menu-open')) header.classList.toggle('is-hidden', goingDown && Math.abs(y - lastY) > 2);
+    var delta = y - lastY;
+    if (!root.classList.contains('menu-open') && Math.abs(delta) > 4) header.classList.toggle('is-hidden', delta > 0 && y > 400);
     lastY = y;
-    // Light text when the header sits over a dark section (and not scrolled)
-    var light = false;
-    for (var i = 0; i < darkZones.length; i++) {
-      var r = darkZones[i].getBoundingClientRect();
-      if (r.top <= 40 && r.bottom >= 40) { light = true; break; }
-    }
-    header.classList.toggle('is-light', light);
+    header.classList.toggle('is-light', !!light);
   }
 
   /* ---------- Mobile menu ---------- */
@@ -298,49 +294,77 @@
     hscroll.classList.toggle('is-static', !hEnabled);
     if (!hEnabled) { hscroll.style.height = ''; hTrack.style.transform = ''; return; }
     hDistance = Math.max(0, hTrack.scrollWidth - window.innerWidth);
-    hscroll.style.height = (window.innerHeight + hDistance) + 'px';
+    hscroll.style.height = (window.innerHeight + hDistance * 0.7) + 'px';
   }
 
+  var dock = $('[data-dock]');
+  var ctaBlock = $('.cta');
+  var footerEl = $('.footer');
   var vh = window.innerHeight;
+  // Parallax only where it is cheap and pleasant: large screens with a mouse.
+  var parallaxOn = function () { return !reduced && finePointer && window.innerWidth > 1024; };
+
+  /* One pass per frame: read every measurement first, then write. Mixing the
+     two forces the browser to recalculate layout repeatedly, which is what
+     makes scrolling feel heavy. */
   function onScroll() {
     var y = window.scrollY;
-    updateHeader(y);
+    var i;
 
-    for (var i = 0; i < parallax.length; i++) {
-      var el = parallax[i];
-      var r = el.getBoundingClientRect();
-      if (r.bottom < -200 || r.top > vh + 200) continue;
-      var speed = parseFloat(el.getAttribute('data-parallax')) || 0.12;
-      var center = r.top + r.height / 2 - vh / 2;
-      el.style.transform = 'translate3d(0,' + (center * -speed).toFixed(1) + 'px,0)';
-    }
-
-    for (var k = 0; k < progressEls.length; k++) {
-      var pe = progressEls[k];
-      var pr = pe.getBoundingClientRect();
-      var p = clamp((vh - pr.top) / (vh + pr.height), 0, 1);
-      pe.style.setProperty('--p', p.toFixed(3));
-    }
-
-    for (var s = 0; s < scrubs.length; s++) {
-      var sc = scrubs[s];
-      var sr = sc.el.getBoundingClientRect();
-      var sp = clamp((vh * 0.92 - sr.top) / (sr.height * 0.85 + vh * 0.12), 0, 1);
-      var lit = Math.floor(sp * sc.words.length);
-      if (lit !== sc.lit) {
-        for (var w = 0; w < sc.words.length; w++) sc.words[w].classList.toggle('lit', w < lit);
-        sc.lit = lit;
+    // ---- read ----
+    var px = [];
+    if (parallaxOn()) {
+      for (i = 0; i < parallax.length; i++) {
+        // measure the untransformed parent so the element never chases itself
+        var host = parallax[i].parentElement || parallax[i];
+        var r = host.getBoundingClientRect();
+        if (r.bottom < -200 || r.top > vh + 200) continue;
+        px.push([parallax[i], r.top + r.height / 2 - vh / 2, parseFloat(parallax[i].getAttribute('data-parallax')) || 0.12]);
       }
     }
-
+    var pv = [];
+    for (i = 0; i < progressEls.length; i++) {
+      var pr = progressEls[i].getBoundingClientRect();
+      if (pr.bottom < 0 || pr.top > vh) continue;
+      pv.push([progressEls[i], clamp((vh - pr.top) / (vh + pr.height), 0, 1)]);
+    }
+    var sv = [];
+    for (i = 0; i < scrubs.length; i++) {
+      var sr = scrubs[i].el.getBoundingClientRect();
+      if (sr.bottom < -vh || sr.top > vh * 2) continue;
+      sv.push([scrubs[i], clamp((vh * 0.92 - sr.top) / (sr.height * 0.85 + vh * 0.12), 0, 1)]);
+    }
+    var hp = null;
     if (hEnabled) {
       var hr = hscroll.getBoundingClientRect();
-      var hp = clamp(-hr.top / (hscroll.offsetHeight - vh), 0, 1);
+      hp = clamp(-hr.top / Math.max(1, hscroll.offsetHeight - vh), 0, 1);
+    }
+    var headerLight = false;
+    for (i = 0; i < darkZones.length; i++) {
+      var z = darkZones[i].getBoundingClientRect();
+      if (z.top <= 40 && z.bottom >= 40) { headerLight = true; break; }
+    }
+    var dockShow = y > vh * 0.7;
+    if (dockShow && ctaBlock) { var cr = ctaBlock.getBoundingClientRect(); if (cr.top < vh && cr.bottom > 0) dockShow = false; }
+    if (dockShow && footerEl && footerEl.getBoundingClientRect().top < vh) dockShow = false;
+
+    // ---- write ----
+    updateHeader(y, headerLight);
+    for (i = 0; i < px.length; i++) px[i][0].style.transform = 'translate3d(0,' + (px[i][1] * -px[i][2]).toFixed(1) + 'px,0)';
+    for (i = 0; i < pv.length; i++) pv[i][0].style.setProperty('--p', pv[i][1].toFixed(3));
+    for (i = 0; i < sv.length; i++) {
+      var sc = sv[i][0];
+      var lit = Math.floor(sv[i][1] * sc.words.length);
+      if (lit === sc.lit) continue;
+      var from = Math.max(0, Math.min(lit, sc.lit)), to = Math.max(lit, sc.lit);
+      for (var w = from; w < to && w < sc.words.length; w++) sc.words[w].classList.toggle('lit', w < lit);
+      sc.lit = lit;
+    }
+    if (hp !== null) {
       hTrack.style.transform = 'translate3d(' + (-hp * hDistance).toFixed(1) + 'px,0,0)';
       if (hBar) hBar.style.setProperty('--p', hp.toFixed(3));
     }
-
-    updateDock(y);
+    if (dock) dock.classList.toggle('is-on', dockShow);
   }
 
   var ticking = false;
@@ -350,24 +374,14 @@
     requestAnimationFrame(function () { ticking = false; onScroll(); });
   }
   window.addEventListener('scroll', requestTick, { passive: true });
-  window.addEventListener('resize', function () { vh = window.innerHeight; setupHScroll(); requestTick(); });
+  window.addEventListener('resize', function () {
+    vh = window.innerHeight; setupHScroll();
+    if (!parallaxOn()) parallax.forEach(function (el) { el.style.transform = ''; });
+    requestTick();
+  });
   window.addEventListener('load', function () { setupHScroll(); requestTick(); });
   setupHScroll();
   onScroll();
-
-  /* ---------- Sticky mobile call-to-action ---------- */
-  var dock = $('[data-dock]');
-  var ctaBlock = $('.cta');
-  function updateDock(y) {
-    if (!dock) return;
-    var show = y > vh * 0.7;
-    if (ctaBlock) {
-      var cr = ctaBlock.getBoundingClientRect();
-      if (cr.top < vh && cr.bottom > 0) show = false;
-    }
-    if (doc.querySelector('.footer') && doc.querySelector('.footer').getBoundingClientRect().top < vh) show = false;
-    dock.classList.toggle('is-on', show);
-  }
 
   /* ---------- Background videos: load lazily, play only when visible ---------- */
   var bgVideos = $$('[data-bg-video]');
@@ -385,7 +399,12 @@
         } else if (!v.paused) v.pause();
       });
     }, { rootMargin: '200px 0px' });
-    bgVideos.forEach(function (v) { v.muted = true; vio.observe(v); });
+    bgVideos.forEach(function (v) {
+      v.muted = true;
+      // purely decorative videos stay as still images on phones and tablets
+      if (v.getAttribute('data-bg-video') === 'desktop' && !finePointer) return;
+      vio.observe(v);
+    });
   }
 
   /* ---------- Inline film (click to play with sound) ---------- */
